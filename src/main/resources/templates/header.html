@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<body>
+<header th:fragment="header"
+        class="bg-blue-600 text-white fixed w-full top-0">
+
+  <div class="container flex mx-auto items-center">
+
+    <h1 class="text-2xl font-bold">
+      Smart Time Card
+    </h1>
+
+    <nav class="ml-auto">
+      <div class="flex gap-4 p-4">
+        <a th:href="@{/}">
+          TOP
+        </a>
+        <a th:href="@{/display}">
+          一覧
+        </a>
+        <a th:href="@{/summary}">
+          集計
+        </a>
+        <a th:href="@{/settings}">
+          設定
+        </a>
+      </div>
+    </nav>
+  </div>
+</header>
+</body>
+</html>

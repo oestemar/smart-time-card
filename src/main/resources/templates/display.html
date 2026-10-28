@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="base :: head('Smart Time Card')">
+</head>
+
+<body class="bg-gray-100">
+
+<header th:replace="header :: header">
+</header>
+
+<main class="container mx-auto pt-20">
+
+    <h2 class="text-2xl font-bold mb-4">
+        Smart Time Card
+    </h2>
+
+    <form th:action="@{/display}"
+          method="get"
+          class="space-y-4">
+
+        <input
+                type="date"
+                name=""
+                placeholder="月"
+                class="border rounded px-3 py-2 w-78">
+        <button
+                type="submit"
+                class="bg-green-600 text-white px-6 py-2 rounded">
+
+            検索
+
+        </button>
+    </form>
+    <table class="min-w-full my-4 border">
+        <thead class="bg-gray-200">
+        <tr>
+            <th class="border p-2">Id</th>
+            <th class="border p-2">勤務日</th>
+            <th class="border p-2">出勤</th>
+            <th class="border p-2">退勤</th>
+            <th class="border p-2">勤務形態</th>
+        </tr>
+
+        </thead>
+
+        <tbody>
+        <tr th:each="record : ${records}">
+            <td class="border p-2" th:text="${record.id}"></td>
+            <td class="border p-2" th:text="${record.workDate}"></td>
+            <td class="border p-2" th:text="${record.startTime}"></td>
+            <td class="border p-2" th:text="${record.endTime}"></td>
+            <td class="border p-2" th:text="${record.workType}"></td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(records)}">
+            <td colspan="7" class="border p-2 text-center">
+                該当するデータはありません
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+</main>
+
+</body>
+</html>

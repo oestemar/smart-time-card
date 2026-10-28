@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="base :: head('Smart Time Card')">
+    <meta charset="UTF-8">
+</head>
+<body>
+    <header th:replace="header :: header">
+        <h2>Smart Time Card</h2>
+        <nav>
+            <a href="/">TOP</a>
+            <a href="/display">履歴</a>
+            <a href="/summary">集計</a>
+            <a href="/settings">設定</a>
+        </nav>
+    </header>
+    <main>
+        <form method="post" >
+            <label>
+                <input type="radio" name="workType" value="OFFICE" checked>
+                出社
+            </label>
+            <label>
+                <input type="radio" name="workType" value="REMOTE">
+                在宅
+            </label><br><br>
+            <button formaction="/start" type="submit">
+                出勤
+            </button>
+            <button formaction="/end" type="submit">
+                退勤
+            </button>
+        </form>
+        <p th:text="${message}"></p>
+        <p>＜１つ前の打刻＞</p>
+        <div th:if="${latestRecord != null}">
+            <p>
+                日付：
+                <span th:text="${latestRecord.workDate}"></span>
+            </p>
+            <p>
+                出勤：
+                <span th:text="${latestRecord.startTime}"></span>
+            </p>
+        </div>
+    </main>
+</body>
+</html>
