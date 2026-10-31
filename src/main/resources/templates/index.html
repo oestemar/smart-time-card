@@ -5,28 +5,23 @@
 </head>
 <body>
     <header th:replace="header :: header">
-        <h2>Smart Time Card</h2>
-        <nav>
-            <a href="/">TOP</a>
-            <a href="/display">履歴</a>
-            <a href="/summary">集計</a>
-            <a href="/settings">設定</a>
-        </nav>
     </header>
-    <main>
-        <form method="post" >
-            <label>
+    <main class="max-w-md mx-auto mt-20 pt-20 px-4 text-center">
+        <form method="post" class="mt-12 space-y-8">
+            <label class="px-2 py-2">
                 <input type="radio" name="workType" value="OFFICE" checked>
                 出社
             </label>
-            <label>
+            <label class="px-2 py-2">
                 <input type="radio" name="workType" value="REMOTE">
                 在宅
-            </label><br><br>
-            <button formaction="/start" type="submit">
+            </label><br><br><br>
+            <button formaction="/start" type="submit"
+                class="px-6 py-2 bg-green-600 text-white rounded">
                 出勤
             </button>
-            <button formaction="/end" type="submit">
+            <button formaction="/end" type="submit"
+                    class="px-6 py-2 bg-green-600 text-white rounded">
                 退勤
             </button>
         </form>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="base :: head('Smart Time Card')">
+</head>
+
+<body class="bg-gray-100">
+
+<header th:replace="header :: header">
+</header>
+
+<main class="max-w-md mx-auto mt-20 pt-20 text-center">
+
+    <h2 class="text-2xl font-bold mb-4">
+        集計
+    </h2>
+    <form th:action="@{/summary}"
+          method="get"
+          class="flex gap-2">
+        <select name="year"
+            class="border rounded px-3 py-2">
+            <option
+                th:each="year : ${years}"
+                th:value="${year}"
+                th:text="${year} + '年度'">
+            </option>
+        </select>
+        <select name="startMonth"
+                class="border rounded px-3 py-2">
+            <option value="01">01月度</option>
+            <option value="02">02月度</option>
+            <option value="03">03月度</option>
+            <option value="04">04月度</option>
+            <option value="05">05月度</option>
+            <option value="06">06月度</option>
+            <option value="07">07月度</option>
+            <option value="08">08月度</option>
+            <option value="09">09月度</option>
+            <option value="10">10月度</option>
+            <option value="11">11月度</option>
+            <option value="12">12月度</option>
+        </select>
+        <select name="endMonth"
+                class="border rounded px-3 py-2">
+            <option value="01">01月度</option>
+            <option value="02">02月度</option>
+            <option value="03">03月度</option>
+            <option value="04">04月度</option>
+            <option value="05">05月度</option>
+            <option value="06">06月度</option>
+            <option value="07">07月度</option>
+            <option value="08">08月度</option>
+            <option value="09">09月度</option>
+            <option value="10">10月度</option>
+            <option value="11">11月度</option>
+            <option value="12">12月度</option>
+        </select>
+        <button
+                type="submit"
+                class="bg-green-600 text-white px-6 py-2 rounded">
+            集計
+        </button>
+    </form>
+    <div class="overflow-x-auto">
+        <table class="min-w-full my-4 border">
+            <thead>
+            <tr>
+                <th>月</th>
+                <th>勤務時間</th>
+                <th>勤務日数</th>
+                <th>平均時間</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${hoursByMonth}">
+                <td class="border p-2" th:text="${item.key}"></td>
+                <td class="border p-2" th:text="${workTimesByMonth[item.key]}"></td>
+                <td class="border p-2" th:text="${workDaysByMonth[item.key]}"></td>
+                <td class="border p-2" th:text="${item.value/workDaysByMonth[item.key]}"></td>
+            </tr>
+            <tr th:if="${hoursByMonth == null or #maps.isEmpty(hoursByMonth)}">
+                <td colspan="5" class="border p-2 text-center">
+                    該当するデータはありません
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+</body>
+</html>
