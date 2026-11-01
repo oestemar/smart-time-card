@@ -1,7 +1,9 @@
 package com.portfolio.smarttimecard.controller;
 
 import com.portfolio.smarttimecard.entity.TimeCard;
+import com.portfolio.smarttimecard.entity.Settings;
 import com.portfolio.smarttimecard.repository.TimeCardRepository;
+import com.portfolio.smarttimecard.repository.SettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Controller;
@@ -21,9 +23,14 @@ import java.util.HashMap;
 @Controller
 public class TimeCardController {
     private final TimeCardRepository timeCardRepository;
+    private final SettingsRepository settingsRepository;
 
-    public TimeCardController(TimeCardRepository timeCardRepository){
+    public TimeCardController(
+            TimeCardRepository timeCardRepository,
+            SettingsRepository settingsRepository
+    ){
         this.timeCardRepository = timeCardRepository;
+        this.settingsRepository = settingsRepository;
     }
 
     @GetMapping("/")
@@ -130,6 +137,17 @@ public class TimeCardController {
                 "records",
                 records
         );
+
+        model.addAttribute(
+            "startDate",
+                startDate
+        );
+
+        model.addAttribute(
+            "endDate",
+                endDate
+        );
+
         return "display";
     }
 
@@ -181,6 +199,13 @@ public class TimeCardController {
                     new HashMap<>();
             Map<YearMonth, Integer> workDaysByMonth =
                     new HashMap<>();
+            Settings settings =
+                    settingsRepository.findById(1L)
+                            .orElse(new Settings());
+            int defaultBreakMinutes =
+                    settings.getDefaultBreakMinutes() == null
+                            ? 60
+                            :settings.getDefaultBreakMinutes().intValue();
 
             for (TimeCard record : records) {
                 if (record.getStartTime() != null
@@ -199,17 +224,12 @@ public class TimeCardController {
 
                     int breakMinutes =
                             record.getBreakTime() == null
-                                    ? 0 : record.getBreakTime();
+                                    ? defaultBreakMinutes
+                                    : record.getBreakTime();
 
                     long minutes =
                             duration.toMinutes()
                                     - breakMinutes;
-                    String workTime =
-                            String.format(
-                                    "%d:%02d",
-                                    minutes/60,
-                                    minutes%60
-                            );
 
                     hoursByMonth.merge(
                             month,
@@ -228,7 +248,7 @@ public class TimeCardController {
             Map<YearMonth, String> workTimesByMonth =
                     new HashMap<>();
 
-            for(Map.Entry<YearMonth, Long> entry
+            for (Map.Entry<YearMonth, Long> entry
                     : hoursByMonth.entrySet()) {
 
                 long minutes = entry.getValue();
@@ -243,10 +263,33 @@ public class TimeCardController {
                 );
             }
 
+            Map<YearMonth, String> averageTimesByMonth =
+                    new HashMap<>();
+
+            for (Map.Entry<YearMonth, Long> entry
+                    : hoursByMonth.entrySet()) {
+
+                YearMonth month = entry.getKey();
+                long totalMinutes = entry.getValue();
+                int workDays =
+                        workDaysByMonth.get(month);
+                long averageMinutes =
+                        totalMinutes / workDays;
+                averageTimesByMonth.put(
+                        month,
+                        String.format(
+                                "%d:%02d",
+                                averageMinutes / 60,
+                                averageMinutes % 60
+                        )
+                );
+            }
+
             model.addAttribute(
                     "hoursByMonth",
                     hoursByMonth
             );
+
             model.addAttribute(
                     "workDaysByMonth",
                     workDaysByMonth
@@ -256,7 +299,106 @@ public class TimeCardController {
                     "workTimesByMonth",
                     workTimesByMonth
             );
+
+            model.addAttribute(
+                    "averageTimesByMonth",
+                    averageTimesByMonth
+            );
+
+            model.addAttribute(
+                    "year",
+                    year
+            );
+
+            model.addAttribute(
+                    "startMonth",
+                    startMonth
+            );
+
+            model.addAttribute(
+                    "endMonth",
+                    endMonth
+            );
         }
+
+        List<Integer> months =
+                List.of(1,2,3,4,5,6,7,8,9,10,11,12);
+
+        model.addAttribute(
+            "months",
+                months
+        );
+
         return "summary";
     }
+
+    @GetMapping("/settings")
+    public String Settings(
+            Model model
+    ){
+        Optional<Settings> settings =
+                settingsRepository.findById(1L);
+
+        if (settings.isPresent()){
+            model.addAttribute(
+                "settings",
+                    settings.get()
+            );
+        } else {
+            model.addAttribute(
+                    "settings",
+                    new Settings()
+            );
+        }
+        return "settings";
+    }
+
+    @PostMapping("/settings")
+    public String Settings(
+            RedirectAttributes redirectAttributes,
+
+            @RequestParam Long defaultBreakMinutes,
+
+            @RequestParam(required = false)
+            Boolean startNoticeEnabled,
+            @RequestParam(required = false)
+            Boolean endNoticeEnabled,
+
+            @RequestParam LocalTime startScheduledTime,
+            @RequestParam LocalTime endScheduledTime
+    ){
+        Settings settings =
+                settingsRepository.findById(1L)
+                        .orElse(new Settings());
+
+        settings.setDefaultBreakMinutes(
+                defaultBreakMinutes
+        );
+
+        settings.setStartNoticeEnabled(
+                startNoticeEnabled != null
+        );
+
+        settings.setEndNoticeEnabled(
+                endNoticeEnabled != null
+        );
+
+        settings.setStartScheduledTime(
+                startScheduledTime
+        );
+
+        settings.setEndScheduledTime(
+                endScheduledTime
+        );
+
+        redirectAttributes.addFlashAttribute(
+                    "message",
+                    "設定を保存しました"
+        );
+
+        settingsRepository.save(settings);
+
+        return "redirect:/settings";
+    }
+
 }

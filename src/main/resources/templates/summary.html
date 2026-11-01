@@ -20,40 +20,30 @@
         <select name="year"
             class="border rounded px-3 py-2">
             <option
-                th:each="year : ${years}"
-                th:value="${year}"
-                th:text="${year} + '年度'">
+                th:each="yearItem : ${years}"
+                th:value="${yearItem}"
+                th:text="${yearItem} + '年度'"
+                th:selected="${yearItem==year}">
             </option>
         </select>
         <select name="startMonth"
                 class="border rounded px-3 py-2">
-            <option value="01">01月度</option>
-            <option value="02">02月度</option>
-            <option value="03">03月度</option>
-            <option value="04">04月度</option>
-            <option value="05">05月度</option>
-            <option value="06">06月度</option>
-            <option value="07">07月度</option>
-            <option value="08">08月度</option>
-            <option value="09">09月度</option>
-            <option value="10">10月度</option>
-            <option value="11">11月度</option>
-            <option value="12">12月度</option>
+            <option
+                th:each="monthItem : ${months}"
+                th:value="${monthItem}"
+                th:text="${monthItem} + '月度'"
+                th:selected="${monthItem==startMonth}">
+            </option>
+
         </select>
         <select name="endMonth"
                 class="border rounded px-3 py-2">
-            <option value="01">01月度</option>
-            <option value="02">02月度</option>
-            <option value="03">03月度</option>
-            <option value="04">04月度</option>
-            <option value="05">05月度</option>
-            <option value="06">06月度</option>
-            <option value="07">07月度</option>
-            <option value="08">08月度</option>
-            <option value="09">09月度</option>
-            <option value="10">10月度</option>
-            <option value="11">11月度</option>
-            <option value="12">12月度</option>
+            <option
+                th:each="monthItem : ${months}"
+                th:value="${monthItem}"
+                th:text="${monthItem} + '月度'"
+                th:selected="${monthItem==endMonth}">
+            </option>
         </select>
         <button
                 type="submit"
@@ -76,7 +66,7 @@
                 <td class="border p-2" th:text="${item.key}"></td>
                 <td class="border p-2" th:text="${workTimesByMonth[item.key]}"></td>
                 <td class="border p-2" th:text="${workDaysByMonth[item.key]}"></td>
-                <td class="border p-2" th:text="${item.value/workDaysByMonth[item.key]}"></td>
+                <td class="border p-2" th:text="${averageTimesByMonth[item.key]}"></td>
             </tr>
             <tr th:if="${hoursByMonth == null or #maps.isEmpty(hoursByMonth)}">
                 <td colspan="5" class="border p-2 text-center">
