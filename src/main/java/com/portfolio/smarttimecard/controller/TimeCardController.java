@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.data.domain.Sort;
 
+import java.sql.Time;
 import java.time.*;
 import java.util.Optional;
 import java.util.List;
@@ -57,7 +59,8 @@ public class TimeCardController {
             TimeCard record = new TimeCard();
             record.setWorkType(workType);
             record.setWorkDate(LocalDate.now());
-            record.setStartTime(LocalTime.now());
+            record.setStartTime(LocalTime.now()
+                    .withSecond(0).withNano(0));
 
             LocalDate today = LocalDate.now();
             Optional<TimeCard> already =
@@ -130,8 +133,14 @@ public class TimeCardController {
                     );
         } else {
             records =
-                    timeCardRepository.findAll();
+                    timeCardRepository.findAll(
+                            Sort.by("workDate").ascending()
+                    );
         }
+
+        Settings settings =
+                settingsRepository.findById(1L)
+                                .orElse(new Settings());
 
         model.addAttribute(
                 "records",
@@ -146,6 +155,11 @@ public class TimeCardController {
         model.addAttribute(
             "endDate",
                 endDate
+        );
+
+        model.addAttribute(
+                "settings",
+                settings
         );
 
         return "display";
@@ -401,4 +415,76 @@ public class TimeCardController {
         return "redirect:/settings";
     }
 
+    @GetMapping("/edit")
+    public String edit(
+            @RequestParam Long id,
+            Model model
+    ){
+        Optional<TimeCard> optionalRecord =
+                timeCardRepository.findById(id);
+
+        if (optionalRecord.isEmpty()){
+            return "redirect:/display";
+        }
+
+        TimeCard record =
+                optionalRecord.get();
+
+        model.addAttribute(
+                "record",
+                record
+        );
+        return "edit";
+    }
+
+    @PostMapping("/edit")
+    public String edit(
+            RedirectAttributes redirectAttributes,
+            @RequestParam Long id,
+            @RequestParam LocalTime startTime,
+            @RequestParam LocalTime endTime,
+            @RequestParam String workType,
+            @RequestParam Integer breakTime,
+            Model model
+    ){
+        Optional<TimeCard> optionalRecord =
+                timeCardRepository.findById(id);
+
+        if(optionalRecord.isPresent()) {
+            TimeCard record = optionalRecord.get();
+
+            record.setStartTime(startTime);
+            record.setEndTime(endTime);
+            record.setWorkType(workType);
+            record.setBreakTime(breakTime);
+
+            timeCardRepository.save(record);
+            redirectAttributes.addFlashAttribute(
+                    "message",
+                    "修正しました"
+            );
+
+            model.addAttribute(
+                    "startTime",
+                    startTime
+            );
+
+            model.addAttribute(
+                    "endTime",
+                    endTime
+            );
+
+            model.addAttribute(
+                    "breakTime",
+                    breakTime
+            );
+
+            model.addAttribute(
+                    "workType",
+                    workType
+            );
+
+        }
+        return "redirect:/display";
+    }
 }

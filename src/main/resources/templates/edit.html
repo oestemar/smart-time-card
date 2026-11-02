@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="base :: head('Smart Time Card')">
+</head>
+
+<body class="bg-gray-100">
+
+<header th:replace="header :: header">
+</header>
+<main class="max-w-md mx-auto mt-20 pt-20">
+    <h2 class="text-2xl font-bold mb-4 text-center"
+        th:text="${record.workDate} + 'の修正'">
+    </h2>
+    <form th:action="@{/edit}"
+          method="post"
+          class="flex flex-col gap-2">
+        <input
+            type="hidden"
+            name="id"
+            th:value="${record.id}">
+        <h2>出退勤</h2>
+        <label>出勤時刻</label>
+        <input
+                type="time"
+                name="startTime"
+                th:value="${#temporals.format(record.startTime,'HH:mm')}"
+                class="border rounded px-3 py-2">
+        <br>
+        <label>退勤時刻</label>
+        <input
+                type="time"
+                name="endTime"
+                th:value="${#temporals.format(record.endTime,'HH:mm')}"
+                class="border rounded px-3 py-2">
+        <br><br>
+        <label>休憩時間（分）</label>
+        <input
+                type="number"
+                name="breakTime"
+                th:value="${record.breakTime}"
+                min="0"
+                step="1"
+                class="border rounded px-3 py-2">
+        <br><br>
+        <h2>勤務形態</h2>
+        <select
+                name="workType"
+                class="border rounded px-3 py-2">
+            <option value="OFFICE"
+                th:selected="${record.workType == 'OFFICE'}">出社</option>
+            <option value="REMOTE"
+                th:selected="${record.workType == 'REMOTE'}">在宅</option>
+        </select>
+        <button
+                type="submit"
+                class="bg-green-600 text-white px-4 py-2 rounded">
+            更新
+        </button>
+    </form>
+</main>
+</body>
+</html>

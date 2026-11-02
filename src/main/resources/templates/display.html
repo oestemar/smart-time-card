@@ -46,7 +46,9 @@
                 <th class="border p-2">勤務日</th>
                 <th class="border p-2">出勤</th>
                 <th class="border p-2">退勤</th>
+                <th class="border p-2">休憩</th>
                 <th class="border p-2">勤務形態</th>
+                <th class="border p-2">修正</th>
             </tr>
 
             </thead>
@@ -55,9 +57,23 @@
             <tr th:each="record : ${records}">
                 <td class="border p-2" th:text="${record.id}"></td>
                 <td class="border p-2" th:text="${record.workDate}"></td>
-                <td class="border p-2" th:text="${record.startTime}"></td>
-                <td class="border p-2" th:text="${record.endTime}"></td>
+                <td class="border p-2" th:text="${#temporals.format(record.startTime, 'HH:mm')}"></td>
+                <td class="border p-2" th:text="${#temporals.format(record.endTime, 'HH:mm')}"></td>
+                <td class="border p-2" th:text="${settings.defaultBreakMinutes}"></td>
                 <td class="border p-2" th:text="${record.workType}"></td>
+                <td class="border p-2">
+                    <form th:action="@{/edit}" method="get">
+                        <input
+                            type="hidden"
+                            name="id"
+                            th:value="${record.id}">
+                        <button
+                                type="submit"
+                                class="bg-green-600 text-white px-3 py-1 rounded">
+                            修正
+                        </button>
+                    </form>
+                </td>
             </tr>
             <tr th:if="${records == null or #lists.isEmpty(records)}">
                 <td colspan="5" class="border p-2 text-center">
