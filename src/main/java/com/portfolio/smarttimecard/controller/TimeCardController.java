@@ -39,6 +39,8 @@ public class TimeCardController {
     public String index(Model model){
         Optional<TimeCard> latestRecord =
                 timeCardRepository.findTopByOrderByIdDesc();
+        Optional<Settings> settings =
+                settingsRepository.findById(1L);
 
         if(latestRecord.isPresent()){
             model.addAttribute(
@@ -46,6 +48,14 @@ public class TimeCardController {
                 latestRecord.get()
             );
         }
+
+        if (settings.isPresent()){
+            model.addAttribute(
+                "settings",
+                settings.get()
+            );
+        }
+
         return "index";
     }
 
@@ -213,6 +223,12 @@ public class TimeCardController {
                     new HashMap<>();
             Map<YearMonth, Integer> workDaysByMonth =
                     new HashMap<>();
+            Map<YearMonth, Long> latenessMinutesByMonth =
+                    new HashMap<>();
+            Map<YearMonth, Long> leavingearlyMinutesByMonth =
+                    new HashMap<>();
+            Map<YearMonth, Long> overtimeMinutesByMonth =
+                    new HashMap<>();
             Settings settings =
                     settingsRepository.findById(1L)
                             .orElse(new Settings());
@@ -235,6 +251,57 @@ public class TimeCardController {
                                     record.getStartTime(),
                                     record.getEndTime()
                             );
+                    if (record.getStartTime().isAfter(
+                            settings.getStartScheduledTime()
+                    )){
+                        Duration duration_lateness =
+                                Duration.between(
+                                        settings.getStartScheduledTime(),
+                                        record.getStartTime()
+                                );
+                        long lateness =
+                                duration_lateness.toMinutes();
+                        latenessMinutesByMonth.merge(
+                                month,
+                                lateness,
+                                Long::sum
+                        );
+                    }
+
+                    if (record.getEndTime().isBefore(
+                            settings.getEndScheduledTime()
+                    )){
+                        Duration duration_leaveearly =
+                                Duration.between(
+                                        record.getEndTime(),
+                                        settings.getEndScheduledTime()
+                                );
+                        long leavingearly =
+                                duration_leaveearly.toMinutes();
+                        leavingearlyMinutesByMonth.merge(
+                                month,
+                                leavingearly,
+                                Long::sum
+                        );
+                    }
+
+                    if (record.getEndTime().isAfter(
+                            settings.getEndScheduledTime()
+                    )){
+                        Duration duration_overtime =
+                                Duration.between(
+                                        settings.getEndScheduledTime(),
+                                        record.getEndTime()
+                                );
+                        long overtime =
+                                duration_overtime.toMinutes();
+                        overtimeMinutesByMonth.merge(
+                                month,
+                                overtime,
+                                Long::sum
+                        );
+                    }
+
 
                     int breakMinutes =
                             record.getBreakTime() == null
@@ -299,6 +366,60 @@ public class TimeCardController {
                 );
             }
 
+            Map<YearMonth, String> latenessTotalByMonth =
+                    new HashMap<>();
+
+            for (Map.Entry<YearMonth, Long> entry
+                    : latenessMinutesByMonth.entrySet()) {
+
+                long minutes = entry.getValue();
+
+                latenessTotalByMonth.put(
+                        entry.getKey(),
+                        String.format(
+                                "%d:%02d",
+                                minutes / 60,
+                                minutes % 60
+                        )
+                );
+            }
+
+            Map<YearMonth, String> leavingearlyTotalByMonth =
+                    new HashMap<>();
+
+            for (Map.Entry<YearMonth, Long> entry
+                    : leavingearlyMinutesByMonth.entrySet()) {
+
+                long minutes = entry.getValue();
+
+                leavingearlyTotalByMonth.put(
+                        entry.getKey(),
+                        String.format(
+                                "%d:%02d",
+                                minutes / 60,
+                                minutes % 60
+                        )
+                );
+            }
+
+            Map<YearMonth, String> overtimeTotalByMonth =
+                    new HashMap<>();
+
+            for (Map.Entry<YearMonth, Long> entry
+                    : overtimeMinutesByMonth.entrySet()) {
+
+                long minutes = entry.getValue();
+
+                overtimeTotalByMonth.put(
+                        entry.getKey(),
+                        String.format(
+                                "%d:%02d",
+                                minutes / 60,
+                                minutes % 60
+                        )
+                );
+            }
+
             model.addAttribute(
                     "hoursByMonth",
                     hoursByMonth
@@ -332,6 +453,21 @@ public class TimeCardController {
             model.addAttribute(
                     "endMonth",
                     endMonth
+            );
+
+            model.addAttribute(
+                "latenessTotalByMonth",
+                    latenessTotalByMonth
+            );
+
+            model.addAttribute(
+                "leavingearlyTotalByMonth",
+                leavingearlyTotalByMonth
+            );
+
+            model.addAttribute(
+                "overtimeTotalByMonth",
+                overtimeTotalByMonth
             );
         }
 
@@ -378,6 +514,9 @@ public class TimeCardController {
             @RequestParam(required = false)
             Boolean endNoticeEnabled,
 
+            @RequestParam LocalTime startNoticeTime,
+            @RequestParam LocalTime endNoticeTime,
+
             @RequestParam LocalTime startScheduledTime,
             @RequestParam LocalTime endScheduledTime
     ){
@@ -395,6 +534,14 @@ public class TimeCardController {
 
         settings.setEndNoticeEnabled(
                 endNoticeEnabled != null
+        );
+
+        settings.setStartNoticeTime(
+                startNoticeTime
+        );
+
+        settings.setEndNoticeTime(
+                endNoticeTime
         );
 
         settings.setStartScheduledTime(

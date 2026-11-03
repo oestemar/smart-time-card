@@ -17,6 +17,8 @@ public class Settings {
     private Long defaultBreakMinutes;
     private Boolean startNoticeEnabled;
     private Boolean endNoticeEnabled;
+    private LocalTime startNoticeTime;
+    private LocalTime endNoticeTime;
     private LocalTime startScheduledTime;
     private LocalTime endScheduledTime;
 
@@ -54,6 +56,22 @@ public class Settings {
 
     public void setEndNoticeEnabled(Boolean endNoticeEnabled){
         this.endNoticeEnabled = endNoticeEnabled;
+    }
+
+    public LocalTime getStartNoticeTime(){
+        return startNoticeTime;
+    }
+
+    public void setStartNoticeTime(LocalTime startNoticeTime){
+        this.startNoticeTime = startNoticeTime;
+    }
+
+    public LocalTime getEndNoticeTime(){
+        return endNoticeTime;
+    }
+
+    public void setEndNoticeTime(LocalTime endNoticeTime){
+        this.endNoticeTime = endNoticeTime;
     }
 
     public LocalTime getStartScheduledTime(){

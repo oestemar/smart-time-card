@@ -37,6 +37,15 @@
                 <span th:text="${latestRecord.startTime}"></span>
             </p>
         </div>
+        <input
+                type="hidden"
+                id="startNoticeTime"
+                th:value="${settings.startNoticeTime}">
+
+        <input
+                type="hidden"
+                id="endNoticeTime"
+                th:value="${settings.endNoticeTime}">
     </main>
 </body>
 </html>

@@ -32,6 +32,12 @@
                     th:checked="${settings.startNoticeEnabled}"
                     class="border rounded px-3 py-2">
             出勤通知
+            <input
+                    type="time"
+                    id="startNoticeTime"
+                    name="startNoticeTime"
+                    th:value="${settings.getStartNoticeTime()}"
+                    class="border rounded px-3 py-2">
         </label><br>
         <label>
             <input
@@ -40,6 +46,12 @@
                     th:checked="${settings.endNoticeEnabled}"
                     class="border rounded px-3 py-2">
             退勤通知
+            <input
+                    type="time"
+                    id="endNoticeTime"
+                    name="endNoticeTime"
+                    th:value="${settings.getEndNoticeTime()}"
+                    class="border rounded px-3 py-2">
         </label><br><br>
 
         <h2>予定時刻</h2>
