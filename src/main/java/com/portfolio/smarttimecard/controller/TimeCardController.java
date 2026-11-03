@@ -39,22 +39,22 @@ public class TimeCardController {
     public String index(Model model){
         Optional<TimeCard> latestRecord =
                 timeCardRepository.findTopByOrderByIdDesc();
-        Optional<Settings> settings =
-                settingsRepository.findById(1L);
 
-        if(latestRecord.isPresent()){
+         if(latestRecord.isPresent()){
             model.addAttribute(
                 "latestRecord",
                 latestRecord.get()
             );
         }
 
-        if (settings.isPresent()){
-            model.addAttribute(
-                "settings",
-                settings.get()
-            );
-        }
+         Settings settings =
+                settingsRepository.findById(1L)
+                        .orElse(new Settings());
+
+        model.addAttribute(
+            "settings",
+            settings
+        );
 
         return "index";
     }
