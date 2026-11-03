@@ -574,6 +574,10 @@ public class TimeCardController {
         Optional<TimeCard> optionalRecord =
                 timeCardRepository.findById(id);
 
+        Settings settings =
+                settingsRepository.findById(1L)
+                .orElse(new Settings());
+
         if (optionalRecord.isEmpty()){
             return "redirect:/display";
         }
@@ -585,6 +589,12 @@ public class TimeCardController {
                 "record",
                 record
         );
+
+        model.addAttribute(
+                "settings",
+                settings
+        );
+
         return "edit";
     }
 
