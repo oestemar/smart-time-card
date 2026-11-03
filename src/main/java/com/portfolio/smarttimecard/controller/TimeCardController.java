@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.data.domain.Sort;
-
+import org.springframework.web.bind.annotation.PathVariable;
 import java.sql.Time;
 import java.time.*;
 import java.util.Optional;
@@ -636,6 +636,15 @@ public class TimeCardController {
             );
 
         }
+        return "redirect:/display";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String delete(
+            @PathVariable Long id){
+
+        timeCardRepository.deleteById(id);
+
         return "redirect:/display";
     }
 }

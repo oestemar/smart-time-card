@@ -30,5 +30,4 @@ public interface TimeCardRepository
             LocalDate endDate
     );
 
-
 }

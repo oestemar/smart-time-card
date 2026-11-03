@@ -49,6 +49,7 @@
                 <th class="border p-2">休憩</th>
                 <th class="border p-2">勤務形態</th>
                 <th class="border p-2">修正</th>
+                <th class="border p-2">削除</th>
             </tr>
 
             </thead>
@@ -71,6 +72,14 @@
                                 type="submit"
                                 class="bg-green-600 text-white px-3 py-1 rounded">
                             修正
+                        </button>
+                    </form>
+                </td>
+                <td>
+                    <form th:action="@{/delete/{id}(id=${record.id})}"
+                          method="post">
+                        <button type="submit">
+                            削除
                         </button>
                     </form>
                 </td>
