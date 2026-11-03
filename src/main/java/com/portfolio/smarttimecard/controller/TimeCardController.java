@@ -602,8 +602,10 @@ public class TimeCardController {
     public String edit(
             RedirectAttributes redirectAttributes,
             @RequestParam Long id,
-            @RequestParam LocalTime startTime,
-            @RequestParam LocalTime endTime,
+            @RequestParam(required = false)
+            LocalTime startTime,
+            @RequestParam(required = false)
+            LocalTime endTime,
             @RequestParam String workType,
             @RequestParam Integer breakTime,
             Model model
