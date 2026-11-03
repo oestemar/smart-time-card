@@ -69,7 +69,8 @@ public class TimeCardController {
             TimeCard record = new TimeCard();
             record.setWorkType(workType);
             record.setWorkDate(LocalDate.now(ZoneId.of("Asia/Tokyo")));
-            record.setStartTime(LocalTime.now(ZoneId.of("Asia/Tokyo"))
+            record.setStartTime(
+                    LocalTime.now(ZoneId.of("Asia/Tokyo"))
                     .withSecond(0).withNano(0));
 
             LocalDate today = LocalDate.now(ZoneId.of("Asia/Tokyo"));
@@ -110,7 +111,10 @@ public class TimeCardController {
                         "退勤を登録しました"
                 );
                 TimeCard timeCard = record.get();
-                timeCard.setEndTime(LocalTime.now(ZoneId.of("Asia/Tokyo")));
+                timeCard.setEndTime(
+                        LocalTime.now(ZoneId.of("Asia/Tokyo"))
+                        .withSecond(0)
+                        .withNano(0));
                 timeCardRepository.save(timeCard);
             } else {
                 redirectAttributes.addFlashAttribute(
