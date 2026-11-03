@@ -75,10 +75,11 @@
                         </button>
                     </form>
                 </td>
-                <td>
+                <td class="border p-2">
                     <form th:action="@{/delete/{id}(id=${record.id})}"
                           method="post">
-                        <button type="submit">
+                        <button type="submit"
+                                class="bg-green-600 text-white px-3 py-1 rounded">>
                             削除
                         </button>
                     </form>
