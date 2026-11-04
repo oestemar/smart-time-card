@@ -8,13 +8,13 @@
 
 <header th:replace="header :: header">
 </header>
-<main class="max-w-md mx-auto mt-20 pt-20">
+<main class="max-w-md mx-auto mt-20 px-4 pt-20">
     <h2 class="text-2xl font-bold mb-4 text-center">
         設定
     </h2>
     <form th:action="@{/settings}"
           method="post"
-          class="ml-4 gap-2">
+          class="gap-2">
         <h2>休憩時間設定</h2>
         <input
                 type="number"
