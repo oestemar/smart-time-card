@@ -81,7 +81,10 @@ JavaとSpringBootを使用したWebアプリケーション開発の学習を目
 - 時刻を打刻するときに ZoneId.of("Asia/Tokyo") を追記
 
 ## 8.画面写真
-
+- [打刻画面/index](images/IMG_01_index.PNG)
+- [一覧画面/display](images/IMG_02_display.PNG)
+- [集計画面/summary](images/IMG_03_summary.PNG)
+- [設定画面/settings](images/IMG_04_settings.PNG)
 
 ## 9.今後の改善予定
 - アイコン／favicon追加
