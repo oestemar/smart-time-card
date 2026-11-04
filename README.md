@@ -80,7 +80,10 @@ JavaとSpringBootを使用したWebアプリケーション開発の学習を目
 - RenderはJavaアプリのデプロイにDockerを使うと良いとのことでDockerを使いました。
 - 時刻を打刻するときに ZoneId.of("Asia/Tokyo") を追記
 
-## 8.今後の改善予定
+## 8.画面写真
+
+
+## 9.今後の改善予定
 - アイコン／favicon追加
 - CSV出力
 - 勤務実績グラフ表示
